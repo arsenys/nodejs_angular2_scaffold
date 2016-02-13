@@ -1,0 +1,11 @@
+html, body {
+  font-family: Tahoma;
+  line-height: 1.3em;
+  padding: 2em;
+}
+
+$title-color: #000;
+$soft-color: #666;
+
+@import "titles.include";
+@import "misc.include";

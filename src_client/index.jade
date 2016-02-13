@@ -1,0 +1,25 @@
+html
+    head
+        base(href="/")
+        title #{gulpSettings.INFO.TITLE}
+        meta(name='description', content='#{gulpSettings.INFO.DESCRIPTION}')
+        meta(name='keywords', content='#{gulpSettings.INFO.KEYWORDS}')
+        meta(name='robots', content='all')
+
+        include ./_common.meta.include.jade
+        include ./_common.styles.include.jade
+        include ./_common.scripts.app.include.jade
+
+        script.
+            System.config({
+                packages: {
+                    app: {
+                        format: 'register',
+                        defaultExtension: 'js'
+                    }
+                }
+            });
+            System.import('#{gulpSettings.FOLDERS.CLIENT.CONTENT.APP}/app.init')
+                    .then(null, console.error.bind(console));
+    body
+        app Loading...

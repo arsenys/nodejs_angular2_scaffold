@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "moment": "github:typings/typed-moment#a4075cd50e63efbedd850f654594f293ab81a385"
+  },
+  "ambientDependencies": {
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#cf2a968f0edd7d30773f7d23fe3708fa029d5ab7",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#c8630523ef2ee3fb42fe65cc17af5b1b56e611bc"
+  }
+}

@@ -1,0 +1,14 @@
+html
+    head
+        base(href="/")
+        title #{gulpSettings.INFO.TITLE} | Error
+        meta(name='description', content='#{gulpSettings.INFO.DESCRIPTION}')
+        meta(name='keywords', content='#{gulpSettings.INFO.KEYWORDS}')
+        meta(name='robots', content='all')
+
+        include ./_common.meta.include.jade
+        include ./_common.styles.include.jade
+        include ./_common.scripts.base.include.jade
+
+    body
+        block content

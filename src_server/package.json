@@ -1,0 +1,15 @@
+{
+  "name": "{{PACKAGE_JSON_NAME}}",
+  "version": "{{PACKAGE_JSON_VERSION}}",
+  "description": "{{PACKAGE_JSON_DESCRIPTION}}",
+  "license": "{{PACKAGE_JSON_LICENSE}}",
+  "private": true,
+  "dependencies": {
+    "express": "^4.13.4",
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "morgan": "^1.6.1",
+    "file-stream-rotator": "0.0.6",
+    "winston": "^2.1.1"
+  }
+}
