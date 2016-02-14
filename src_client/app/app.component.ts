@@ -34,7 +34,7 @@ import {Page1} from './components/page1';
     new AsyncRoute({
         path: '/page2',
         name: 'Page2',
-        loader: () => System.import('app/components/page2').then(m=> m.Page2)
+        loader: () => System.import('app/components/page2').then(m=> m['Page2'])
     })
 ])
 export class AppComponent {

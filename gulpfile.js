@@ -17,9 +17,11 @@ var gulpSettings = require('./gulpfile.config.js');
 var packageJson = require('./package.json');
 
 /*
- * CLIENT
+ * CLIENT BUILDING TASKS
+ * ---------------------
  * */
 
+// Compiling Jade templates to HTML (files that end with .include.jade are ignored)
 gulp.task('client-app-html', function () {
     return gulp.src([
             './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/**/*.jade',
@@ -31,33 +33,27 @@ gulp.task('client-app-html', function () {
         .pipe(gulp.dest('./' + gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT));
 });
 
+// Compiling TypeScript to JavaScript, minified for production and with sourcemaps for development
 gulp.task('client-app-scripts', function () {
-    var tsProject = gulp_typescript.createProject(
-        'tsconfig.json',
-        {
-            typescript: require('typescript')
-        }
-    );
 
-    var tsResult = gulp.src('./' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/app/**/*.ts', {base: './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/app'})
+    return gulp.src('./' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/app/**/*.ts', {base: './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/app'})
         .pipe(gulp_replace('// GULP: Enable/Disable Production Mode', gulpSettings.PRODUCTION ? 'enableProdMode();' : ''))
-        .pipe(gulp_typescript(tsProject));
-
-    return tsResult.js
+        .pipe(gulp_typescript(
+            gulp_typescript.createProject('tsconfig.json', {typescript: require('typescript')})
+        )).js
         .pipe(gulp_if(!gulpSettings.PRODUCTION, gulp_sourcemaps.init()))
         .pipe(gulp_if(gulpSettings.PRODUCTION, gulp_uglify()))
         .pipe(gulp_if(!gulpSettings.PRODUCTION, gulp_sourcemaps.write('.')))
         .pipe(gulp.dest('./' + gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT + '/' + gulpSettings.FOLDERS.CLIENT.CONTENT.APP));
 });
 
+// Compiling SCSS files to CSS (files that end with .include.scss are ignored)
 gulp.task('client-app-styles', function () {
     return gulp.src([
             './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/styles/*.scss',
             '!./' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/styles/*.include.scss'
         ],
-        {
-            base: './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/styles'
-        })
+        {base: './' + gulpSettings.FOLDERS.SOURCES.CLIENT + '/styles'})
         .pipe(gulp_concat('app.css'))
         .pipe(gulp_if(!gulpSettings.PRODUCTION, gulp_sourcemaps.init()))
         .pipe(gulp_sass())
@@ -65,6 +61,7 @@ gulp.task('client-app-styles', function () {
         .pipe(gulp.dest(gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT + '/' + gulpSettings.FOLDERS.CLIENT.CONTENT.STYLES));
 });
 
+// Preparing vendor scripts as libraries bundle and Angular2 related scripts bundle
 gulp.task('client-vendor-scripts', function () {
 
     var utilityLibraries = [];
@@ -110,6 +107,7 @@ gulp.task('client-vendor-scripts', function () {
             .pipe(gulp.dest(gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT + '/' + gulpSettings.FOLDERS.CLIENT.CONTENT.VENDOR))
 });
 
+// Preparing styles that are bundled with vendor libraries
 gulp.task('client-vendor-styles', function () {
     gulp.src([
             'node_modules/css-wipe/reset.css'
@@ -118,13 +116,14 @@ gulp.task('client-vendor-styles', function () {
         .pipe(gulp.dest(gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT + '/' + gulpSettings.FOLDERS.CLIENT.CONTENT.VENDOR));
 });
 
+// Copying images resources to distribution folder
 gulp.task('client-resources-images', function () {
-    gulp.src([
-            gulpSettings.FOLDERS.SOURCES.CLIENT + '/resources/images/**/*'
-        ])
+    gulp
+        .src(gulpSettings.FOLDERS.SOURCES.CLIENT + '/resources/images/**/*')
         .pipe(gulp.dest(gulpSettings.FOLDERS.DIST + '/' + gulpSettings.FOLDERS.CLIENT.ROOT + '/' + gulpSettings.FOLDERS.CLIENT.CONTENT.IMAGES));
 });
 
+// Copying favicons to distribution root folder agents ignoring meta tags
 gulp.task('client-resources-favicons', function () {
     gulp.src([
             gulpSettings.FOLDERS.SOURCES.CLIENT + '/resources/images/favicons/favicon.ico',
@@ -134,22 +133,19 @@ gulp.task('client-resources-favicons', function () {
 });
 
 /*
- * SERVER
+ * SERVER BUILDING TASKS
+ * ---------------------
  * */
 
+// Copying server scripts, minified for production
 gulp.task('server-scripts', function () {
-    return gulp.src('./' + gulpSettings.FOLDERS.SOURCES.SERVER + '/**/*.js')
-        .pipe(gulp_replace('{{GULP_SETTINGS_PORT_DEVELOPMENT}}', gulpSettings.PORT.DEVELOPMENT))
-        .pipe(gulp_replace('{{GULP_SETTINGS_PORT_PRODUCTION}}', gulpSettings.PORT.PRODUCTION))
-        .pipe(gulp_replace('{{GULP_SETTINGS_CLIENT_ROOT}}', gulpSettings.FOLDERS.CLIENT.ROOT))
-        .pipe(gulp_replace('{{GULP_SETTINGS_API_BASE_PATH}}', gulpSettings.FOLDERS.SERVER.API_BASE_PATH))
-        .pipe(gulp_replace('{{GULP_SETTINGS_REQUESTS_LOGS_PATH}}', gulpSettings.FOLDERS.SERVER.REQUESTS_LOGS))
-        .pipe(gulp_replace('{{GULP_SETTINGS_ACTIVITY_LOGS_PATH}}', gulpSettings.FOLDERS.SERVER.ACTIVITY_LOGS))
-        .pipe(gulp_replace('{{REQUESTS_ONLY_ERRORS}}', gulpSettings.LOGS.REQUESTS_ONLY_ERRORS))
-        .pipe(gulp_replace('{{REQUESTS_FORMAT}}', gulpSettings.LOGS.REQUESTS_FORMAT))
+    return gulp
+        .src('./' + gulpSettings.FOLDERS.SOURCES.SERVER + '/**/*.js')
+        .pipe(gulp_if(gulpSettings.PRODUCTION, gulp_uglify()))
         .pipe(gulp.dest('./' + gulpSettings.FOLDERS.DIST));
 });
 
+// Copying server's package.json to distribution folder adding info from project's file
 gulp.task('server-package-json', function () {
     return gulp.src('./' + gulpSettings.FOLDERS.SOURCES.SERVER + '/package.json')
         .pipe(gulp_replace('{{PACKAGE_JSON_NAME}}', packageJson.name))
@@ -159,6 +155,7 @@ gulp.task('server-package-json', function () {
         .pipe(gulp.dest('./' + gulpSettings.FOLDERS.DIST));
 });
 
+// Creating and copying to distribution server configuration file
 gulp.task('server-config-json', function () {
     var configJson = {
         isProduction: gulpSettings.PRODUCTION,
@@ -168,6 +165,7 @@ gulp.task('server-config-json', function () {
                 development: gulpSettings.PORT.DEVELOPMENT
             },
             staticFolder: gulpSettings.FOLDERS.CLIENT.ROOT,
+            apiBasePath: gulpSettings.FOLDERS.SERVER.API_BASE_PATH,
             customErrorPages: true
         },
         logging: {
@@ -193,22 +191,28 @@ gulp.task('server-config-json', function () {
         .pipe(gulp.dest(gulpSettings.FOLDERS.DIST));
 });
 
+// Executing npm packages in distribution folder for server
 gulp.task('server-npm-install', gulp_shell.task('npm install', {cwd: './' + gulpSettings.FOLDERS.DIST}));
 
 /*
  * UTILITIES
+ * ---------
  * */
 
+// Cleaning distribution folder
 gulp.task('_clean', function () {
     return gulp_del.sync([gulpSettings.FOLDERS.DIST]);
 });
 
+// Starting NodeJS server
 gulp.task('_start', gulp_shell.task('node index.js', {cwd: './' + gulpSettings.FOLDERS.DIST}));
 
 /*
  * AGGREGATION TASKS
+ * -----------------
  * */
 
+// Building client
 gulp.task('_client', [
     'client-app-html',
     'client-app-scripts',
@@ -220,6 +224,7 @@ gulp.task('_client', [
 ], function () {
 });
 
+// Building server
 gulp.task('_server', function (callback) {
     gulp_sequence([
             'server-config-json',
@@ -229,8 +234,15 @@ gulp.task('_server', function (callback) {
         callback);
 });
 
-gulp.task('_build-all', ['_server','_client'], function () {});
+// Building solution to distribution folder
+gulp.task('_build-all', ['_server', '_client'], function () {
+});
 
+// Building solution from scratch and executing server
 gulp.task('default', [], function (callback) {
-    gulp_sequence('_clean', '_build-all', '_start', callback);
+    gulp_sequence(
+        '_clean',
+        '_build-all',
+        '_start',
+        callback);
 });

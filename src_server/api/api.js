@@ -1,15 +1,10 @@
 module.exports = {
-  register: function (app) {
+    register: function (app, config) {
 
-      app.get('/{{GULP_SETTINGS_API_BASE_PATH}}/hello', function (req, res) {
-          res
-              .json({message: 'Hello World!'})
-              .end();
-      });
-
-      app.get('/{{GULP_SETTINGS_API_BASE_PATH}}/make-error', function (req, res) {
-          res.send(xxx.length).end();
-      });
-
-  }
+        app.get('/' + config.server.apiBasePath + '/hello', function (req, res) {
+            res
+                .json({message: 'Hello World!'})
+                .end();
+        });
+    }
 };

@@ -18,7 +18,7 @@ loggingActivity.init(config);
 
 parsers.init(app);
 
-app.use(express.static('./' + config.server.staticFolder ));
+app.use(express.static('./' + config.server.staticFolder));
 
 api.register(app, config);
 

@@ -4,6 +4,7 @@
   },
   "ambientDependencies": {
     "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#cf2a968f0edd7d30773f7d23fe3708fa029d5ab7",
-    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#c8630523ef2ee3fb42fe65cc17af5b1b56e611bc"
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#c8630523ef2ee3fb42fe65cc17af5b1b56e611bc",
+    "systemjs": "github:DefinitelyTyped/DefinitelyTyped/systemjs/systemjs.d.ts#83af898254689400de8fb6495c34119ae57ec3fe"
   }
 }
