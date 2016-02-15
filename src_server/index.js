@@ -1,29 +1,39 @@
-var config = require('./config.json');
-var express = require('express');
+var config = require('./config.json'),
+    express = require('express');
 
-var api = require('./api/api');
+var port = config.isProduction ?
+    config.server.ports.production :
+    config.server.ports.development;
 
-var parsers = require('./middleware/parsers');
-var errorsHttp = require('./middleware/errors.http');
+/* Initializing multi-transport async logging with Winston middleware */
+var logger = require('./middleware/logging.activity')(app, config);
+logger.log('info', 'Logger initialized');
 
-var loggingRequests = require('./middleware/logging.requests');
-var loggingActivity = require('./middleware/logging.activity');
-
-var port = config.isProduction ? config.server.ports.production : config.server.ports.development;
-
+/* Creating Express application */
 var app = express();
+logger.log('info', 'Express app created');
 
-loggingRequests.init(app, config);
-loggingActivity.init(config);
+/* Initializing HTTP request logger middleware with Morgan middleware */
+require('./middleware/logging.requests')(app, config);
+logger.log('info', 'HTTP request logger initialized');
 
-parsers.init(app);
+/* Setting up common middleware parsers for Express for cookies, json etc. */
+require('./middleware/parsers')(app, config);
+logger.log('info', 'Middleware parsers set up');
 
+/* Configuring static folder for Express where Angular2 app is published to */
 app.use(express.static('./' + config.server.staticFolder));
+logger.log('info', 'Static folder for app configured in "' + config.server.staticFolder + '"');
 
-api.register(app, config);
+/* Registering routes for APIs */
+app.use('/' + config.server.apiBasePath, require('./routes/api'));
+logger.log('info', 'Registered routes for API on "/' + config.server.apiBasePath + '"');
 
-errorsHttp.init(app, loggingActivity, config);
+/* Registering custom HTTP error handlers for 404 and 500 */
+require('./middleware/errors.http')(app, logger, config);
+logger.log('info', 'Registered custom HTTP error handlers');
 
+/* Starting server */
 app.listen(port, function () {
-    console.log('Express server is started on port ' + port);
+    logger.log('info', 'Express server is started on port ' + port);
 });

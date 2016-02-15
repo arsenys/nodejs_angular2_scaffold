@@ -78,7 +78,8 @@ Use `gulp default` to perform full build to deployment folder and start the serv
 +-- src_server
 |   |   index.js   (main NodeJS server file)
 |   |   package.json   (NodeJS info and dependencies file for published app)
-|   +-- api   (folder for server API implementations)
+|   +-- routes   (folder for app sub routes and API calls)
+|   |   +-- api.js   (Implementation for APIs)
 |   +-- middleware   (various middleware initialization files used by index.js)
 +-- typings    (resolved d.ts definition files for TypeScript)
 ```
