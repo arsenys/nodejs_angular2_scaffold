@@ -41,7 +41,7 @@ gulp.task('client-app-html', function () {
 gulp.task('client-app-scripts', function () {
 
     return gulp.src('./' + gulpConfig.FOLDERS.SOURCES.CLIENT + '/app/**/*.ts', {base: './' + gulpConfig.FOLDERS.SOURCES.CLIENT + '/app'})
-        .pipe(gulp_replace('// GULP: Enable/Disable Production Mode', gulpConfig.PRODUCTION ? 'enableProdMode();' : ''))
+        .pipe(gulp_replace('// enableProdMode();', gulpConfig.PRODUCTION ? 'enableProdMode();' : ''))
         .pipe(gulp_typescript(
             gulp_typescript.createProject('tsconfig.json', {typescript: require('typescript')})
         )).js
