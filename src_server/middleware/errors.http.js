@@ -5,6 +5,9 @@ module.exports = function (app, logger, config) {
         return;
     }
 
+    /*
+     * Catches Not Found errors (404), determines html/json/text request type and responses accordingly
+     */
     app.use(function (req, res) {
         res.status(404);
 
@@ -16,9 +19,12 @@ module.exports = function (app, logger, config) {
         } else {
             res.send('Not found');
         }
-        res.end();
     });
 
+    /*
+     * Catches Internal Server errors (500), determines html/json/text request type and responses accordingly
+     * NOTE: last param of the function 'next' is required in signature to catch error requests
+     */
     app.use(function (err, req, res, next) {
         logger.error(err.message + '\n' + err.stack + '\n\n');
         res.status(500);
@@ -27,10 +33,12 @@ module.exports = function (app, logger, config) {
                 fs.readFileSync(__dirname + '/../' + config.server.staticFolder + '/error.500.html', 'utf8')
                     .replace('{{ERROR}}', false ? '' : err.message)
                     .replace('{{STACK_TRACE}}', false ? '' : err.stack)
-            );
-        } else {
-            res.json({error: err.message});
+            )
         }
-        res.end();
+        else if (req.accepts('json')) {
+            res.json({error: err.message});
+        } else {
+            res.send('Error');
+        }
     });
 };

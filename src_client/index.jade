@@ -1,9 +1,9 @@
 html
     head
         base(href="/")
-        title #{gulpSettings.INFO.TITLE}
-        meta(name='description', content='#{gulpSettings.INFO.DESCRIPTION}')
-        meta(name='keywords', content='#{gulpSettings.INFO.KEYWORDS}')
+        title #{gulpConfig.INFO.TITLE}
+        meta(name='description', content='#{gulpConfig.INFO.DESCRIPTION}')
+        meta(name='keywords', content='#{gulpConfig.INFO.KEYWORDS}')
         meta(name='robots', content='all')
 
         include ./_common.meta.include.jade
@@ -19,7 +19,7 @@ html
                     }
                 }
             });
-            System.import('#{gulpSettings.FOLDERS.CLIENT.CONTENT.APP}/app.init')
+            System.import('#{gulpConfig.FOLDERS.CLIENT.CONTENT.APP}/app.init')
                     .then(null, console.error.bind(console));
     body
         app Loading...

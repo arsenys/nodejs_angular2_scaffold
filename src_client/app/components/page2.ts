@@ -40,7 +40,6 @@ export class Page2 {
         this._githubService.getPublicRepos().subscribe(
             data => {
                 this._data = data;
-                console.log(this._data);
                 this._pagingData = Array(Math.ceil(this._data.length / this._perPage));
                 this._applyPaging(0);
             },
