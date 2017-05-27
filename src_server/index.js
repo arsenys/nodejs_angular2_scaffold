@@ -5,13 +5,12 @@ var port = config.isProduction ?
     config.server.ports.production :
     config.server.ports.development;
 
+/* Creating Express application */
+var app = express();
+
 /* Initializing multi-transport async logging with Winston middleware */
 var logger = require('./middleware/logging.activity')(app, config);
 logger.log('info', 'Logger initialized');
-
-/* Creating Express application */
-var app = express();
-logger.log('info', 'Express app created');
 
 /* Initializing HTTP request logger middleware with Morgan middleware */
 require('./middleware/logging.requests')(app, config);

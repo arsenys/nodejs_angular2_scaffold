@@ -30,7 +30,7 @@ gulp.task('client-app-html', function () {
             '!./' + gulpConfig.FOLDERS.SOURCES.CLIENT + '/**/*.include.jade'
         ])
         .pipe(gulp_jade({
-            locals: {gulpConfig: gulpConfig}
+            locals: { gulpConfig }
         }))
         .pipe(gulp.dest('./' + gulpConfig.FOLDERS.DIST + '/' + gulpConfig.FOLDERS.CLIENT.ROOT));
 });
@@ -74,18 +74,10 @@ gulp.task('client-app-styles', function () {
 gulp.task('client-vendor-scripts', function () {
 
     var utilityLibraries = [];
-
-    if (gulpConfig.UTILITIES.JQUERY) {
-        utilityLibraries.push('node_modules/jquery/dist/jquery' + (gulpConfig.PRODUCTION ? '.min' : '') + '.js');
-    }
-
-    if (gulpConfig.UTILITIES.LODASH) {
-        utilityLibraries.push('node_modules/lodash/lodash.js');
-    }
-
-    if (gulpConfig.UTILITIES.MOMENT) {
-        utilityLibraries.push('node_modules/moment/min/' + (gulpConfig.UTILITIES.MOMENT_WITH_LOCALES ? 'moment-with-locales.min' : 'moment.min') + '.js')
-    }
+    
+    gulpConfig.UTILITIES.JQUERY && utilityLibraries.push('node_modules/jquery/dist/jquery' + (gulpConfig.PRODUCTION ? '.min' : '') + '.js');
+    gulpConfig.UTILITIES.LODASH && utilityLibraries.push('node_modules/lodash/lodash.js');
+    gulpConfig.UTILITIES.MOMENT && utilityLibraries.push('node_modules/moment/min/' + (gulpConfig.UTILITIES.MOMENT_WITH_LOCALES ? 'moment-with-locales.min' : 'moment.min') + '.js')
 
     return gulp.src([
                 'node_modules/angular2/bundles/angular2-polyfills' + (gulpConfig.PRODUCTION ? '.min' : '') + '.js',
